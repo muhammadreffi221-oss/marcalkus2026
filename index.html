@@ -1,121 +1,254 @@
-<!-- BAGIAN YANG DIUBAH HANYA DI SCRIPT (hitung function) -->
-<script>
-    let rows = [];
-    const opt = { digitGroupSeparator: '.', decimalCharacter: ',', decimalPlaces: 2, currencySymbol: 'Rp' };
-    document.getElementById('project_date').valueAsDate = new Date();
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Profit Project</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.6.0/dist/autoNumeric.min.js"></script>
+    <style>
+        .row-item input { width: 100%; border: 1px solid #e2e8f0; padding: 0.5rem; border-radius: 0.375rem; font-size: 0.875rem; }
+        .summary-card { transition: all 0.3s ease; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen p-4 md:p-8">
 
-    const anOngkirJual = new AutoNumeric('#ongkir_jual', opt);
-    const anOngkirBeli = new AutoNumeric('#ongkir_beli', opt);
-    const anInstal = new AutoNumeric('#instal', opt);
-    const anLain = new AutoNumeric('#lainnya', opt);
-    const anDisc = new AutoNumeric('#disc_persen', { suffixText: ' %', maximumValue: '100', minimumValue: '0', decimalPlaces: 2, digitGroupSeparator: '' });
+    <div class="max-w-5xl mx-auto space-y-6">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500 summary-card">
+                <p class="text-sm text-slate-500 font-medium">Profit (Inc. PPN)</p>
+                <h2 id="head_profit_inc" class="text-2xl font-bold text-slate-800">Rp0,00</h2>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-emerald-500 summary-card">
+                <p class="text-sm text-slate-500 font-medium">Margin (Inc. PPN)</p>
+                <h2 id="head_margin_inc" class="text-2xl font-bold text-slate-800">0.00%</h2>
+            </div>
+        </div>
 
-    function tambahBaris() {
-        const id = Date.now();
-        const container = document.getElementById('produk-container');
-        const rowHTML = `
-            <div id="row-${id}" class="row-item relative p-3 border rounded-lg bg-slate-50/50">
-                <button onclick="hapusBaris(${id})" class="absolute top-1 right-2 text-slate-300 hover:text-red-500">✕</button>
-                <div class="grid grid-cols-3 gap-4">
-                    <div><input type="number" id="qty-${id}" value="1" oninput="hitung()" class="text-xs font-bold border rounded p-1.5 text-center"></div>
-                    <div><input type="text" id="jual-${id}" oninput="hitung()"></div>
-                    <div><input type="text" id="beli-${id}" oninput="hitung()"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
+                    <h3 class="font-bold text-slate-700 border-b pb-2">Informasi Proyek</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase">Tanggal</label>
+                            <input type="date" id="project_date" class="w-full border rounded-lg p-2 text-sm mt-1">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase">Disc/CN (%)</label>
+                            <input type="text" id="disc_persen" class="w-full border rounded-lg p-2 text-sm mt-1" value="0">
+                        </div>
+                    </div>
                 </div>
-            </div>`;
-        container.insertAdjacentHTML('beforeend', rowHTML);
-        new AutoNumeric(`#jual-${id}`, opt);
-        new AutoNumeric(`#beli-${id}`, opt);
-        rows.push(id);
-        hitung();
-    }
 
-    function hapusBaris(id) {
-        if (rows.length > 1) {
-            document.getElementById(`row-${id}`).remove();
-            rows = rows.filter(rid => rid !== id);
+                <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h3 class="font-bold text-slate-700">Daftar Produk</h3>
+                        <button onclick="tambahBaris()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-lg transition">+ Tambah Produk</button>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 px-3 text-[10px] font-bold text-slate-400 uppercase">
+                        <div>Qty</div>
+                        <div>Harga Jual (Inc)</div>
+                        <div>Harga Beli (Inc)</div>
+                    </div>
+
+                    <div id="produk-container" class="space-y-3">
+                        </div>
+
+                    <div class="grid grid-cols-2 gap-4 pt-4 border-t mt-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500">Ongkir Jual</label>
+                            <input type="text" id="ongkir_jual" class="w-full border rounded-lg p-2 text-sm mt-1">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500">Ongkir Beli</label>
+                            <input type="text" id="ongkir_beli" class="w-full border rounded-lg p-2 text-sm mt-1">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500">Instalasi</label>
+                            <input type="text" id="instal" class="w-full border rounded-lg p-2 text-sm mt-1">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500">Lainnya</label>
+                            <input type="text" id="lainnya" class="w-full border rounded-lg p-2 text-sm mt-1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-slate-800 text-white p-6 rounded-xl shadow-lg space-y-4">
+                    <h3 class="font-bold border-b border-slate-700 pb-2 text-blue-400">Rincian Pendapatan</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between"><span>Pagu Proyek</span><span id="s_pagu">Rp0</span></div>
+                        <div class="flex justify-between text-slate-400"><span>DPP Jual</span><span id="s_dpp">Rp0</span></div>
+                        <div class="flex justify-between text-slate-400"><span>PPN Jual</span><span id="s_ppn">Rp0</span></div>
+                        <div class="flex justify-between text-red-400"><span>PPh 22 (1.5%)</span><span id="s_pph">Rp0</span></div>
+                        <div class="flex justify-between text-slate-400"><span>Ongkir Jual</span><span id="s_ongkir_jual">Rp0</span></div>
+                        <hr class="border-slate-700">
+                        <div class="flex justify-between font-bold text-emerald-400 italic"><span>Nett Terima</span><span id="s_nett">Rp0</span></div>
+                    </div>
+
+                    <h3 class="font-bold border-b border-slate-700 pb-2 mt-6 text-blue-400">Biaya & COGS</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between"><span>Total Beli (Inc)</span><span id="c_inv">Rp0</span></div>
+                        <div class="flex justify-between text-slate-400"><span>DPP Beli</span><span id="c_dpp_beli">Rp0</span></div>
+                        <div class="flex justify-between text-slate-400"><span>PPN Beli</span><span id="c_ppn_beli">Rp0</span></div>
+                        <div class="flex justify-between text-slate-400"><span>Ongkir Beli</span><span id="c_ongkir_beli">Rp0</span></div>
+                        <div class="flex justify-between text-orange-400"><span>Admin (0.5%)</span><span id="c_admin">Rp0</span></div>
+                        <div class="flex justify-between text-orange-400"><span>Insentif (1%)</span><span id="s_insentif">Rp0</span></div>
+                        <div class="flex justify-between text-orange-400"><span>Disc/CN (Rp)</span><span id="s_cn_rp">Rp0</span></div>
+                        <hr class="border-slate-700">
+                        <div class="flex justify-between font-bold"><span>Total Biaya</span><span id="res_total_inc">Rp0</span></div>
+                    </div>
+
+                    <div class="bg-slate-900 p-4 rounded-lg mt-6 border border-slate-700">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-2">Final Result (Exc. PPN)</h3>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-emerald-400" id="p_gp_exc">Rp0</span>
+                            <span class="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded text-xs font-bold" id="p_margin_exc">0%</span>
+                        </div>
+                        <div class="hidden"><span id="res_total_exc"></span></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let rows = [];
+        const opt = { digitGroupSeparator: '.', decimalCharacter: ',', decimalPlaces: 2, currencySymbol: 'Rp' };
+        
+        // Inisialisasi awal
+        document.getElementById('project_date').valueAsDate = new Date();
+
+        const anOngkirJual = new AutoNumeric('#ongkir_jual', opt);
+        const anOngkirBeli = new AutoNumeric('#ongkir_beli', opt);
+        const anInstal = new AutoNumeric('#instal', opt);
+        const anLain = new AutoNumeric('#lainnya', opt);
+        const anDisc = new AutoNumeric('#disc_persen', { suffixText: ' %', maximumValue: '100', minimumValue: '0', decimalPlaces: 2, digitGroupSeparator: '' });
+
+        function tambahBaris() {
+            const id = Date.now();
+            const container = document.getElementById('produk-container');
+            const rowHTML = `
+                <div id="row-${id}" class="row-item relative p-3 border rounded-lg bg-slate-50/50 shadow-sm border-slate-200">
+                    <button onclick="hapusBaris(${id})" class="absolute -top-2 -right-2 bg-white text-slate-400 hover:text-red-500 border rounded-full w-6 h-6 flex items-center justify-center shadow-sm">✕</button>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div><input type="number" id="qty-${id}" value="1" oninput="hitung()" class="text-center font-bold"></div>
+                        <div><input type="text" id="jual-${id}" oninput="hitung()"></div>
+                        <div><input type="text" id="beli-${id}" oninput="hitung()"></div>
+                    </div>
+                </div>`;
+            container.insertAdjacentHTML('beforeend', rowHTML);
+            new AutoNumeric(`#jual-${id}`, opt);
+            new AutoNumeric(`#beli-${id}`, opt);
+            rows.push(id);
             hitung();
         }
-    }
 
-    function hitung() {
-        let totalJualInc = 0;
-        let totalBeliInc = 0;
+        function hapusBaris(id) {
+            if (rows.length > 1) {
+                document.getElementById(`row-${id}`).remove();
+                rows = rows.filter(rid => rid !== id);
+                hitung();
+            }
+        }
 
-        rows.forEach(id => {
-            const qty = parseFloat(document.getElementById(`qty-${id}`).value) || 0;
-            const hj = AutoNumeric.getAutoNumericElement(`#jual-${id}`).getNumber() || 0;
-            const hb = AutoNumeric.getAutoNumericElement(`#beli-${id}`).getNumber() || 0;
-            totalJualInc += (qty * hj);
-            totalBeliInc += (qty * hb);
-        });
+        function hitung() {
+            let totalJualInc = 0;
+            let totalBeliInc = 0;
 
-        const oJual = anOngkirJual.getNumber() || 0;
-        const oBeli = anOngkirBeli.getNumber() || 0;
-        const instal = anInstal.getNumber() || 0;
-        const lain = anLain.getNumber() || 0;
-        const dP = anDisc.getNumber() || 0;
+            rows.forEach(id => {
+                const qtyInput = document.getElementById(`qty-${id}`);
+                const jualInput = document.getElementById(`jual-${id}`);
+                const beliInput = document.getElementById(`beli-${id}`);
 
-        if (totalJualInc === 0) return;
+                if(qtyInput && jualInput && beliInput) {
+                    const qty = parseFloat(qtyInput.value) || 0;
+                    const hj = AutoNumeric.getAutoNumericElement(`#jual-${id}`).getNumber() || 0;
+                    const hb = AutoNumeric.getAutoNumericElement(`#beli-${id}`).getNumber() || 0;
+                    totalJualInc += (qty * hj);
+                    totalBeliInc += (qty * hb);
+                }
+            });
 
-        // ===== PENDAPATAN =====
-        const paguInc = totalJualInc + oJual;
-        const dppJual = paguInc / 1.11;
-        const ppnJual = paguInc - dppJual;
-        const pph22 = dppJual * 0.015;
+            const oJual = anOngkirJual.getNumber() || 0;
+            const oBeli = anOngkirBeli.getNumber() || 0;
+            const instal = anInstal.getNumber() || 0;
+            const lain = anLain.getNumber() || 0;
+            const dP = anDisc.getNumber() || 0;
 
-        // ===== NETT =====
-        const terimaNett = dppJual - pph22 - oJual;
+            if (totalJualInc === 0) return;
 
-        // ===== DISCOUNT & FEE =====
-        const discCnRp = dppJual * (dP / 100); // sesuai Excel
-        const insentif = terimaNett > 0 ? terimaNett * 0.01 : 0;
-        const admin = terimaNett > 0 ? terimaNett * 0.005 : 0;
+            // ===== PENDAPATAN =====
+            const paguInc = totalJualInc + oJual;
+            const dppJual = paguInc / 1.11;
+            const ppnJual = paguInc - dppJual;
+            const pph22 = dppJual * 0.015;
 
-        // ===== COGS =====
-        const dppBeli = totalBeliInc / 1.11;
-        const ppnBeli = totalBeliInc - dppBeli;
+            // ===== NETT =====
+            const terimaNett = dppJual - pph22 - oJual;
 
-        // 🔥 PENTING: PPN BELI TIDAK MASUK COST
-        const totalBiayaInc = dppBeli + oBeli + instal + lain + admin + insentif + discCnRp;
-        const totalBiayaExc = totalBiayaInc;
+            // ===== DISCOUNT & FEE =====
+            const discCnRp = dppJual * (dP / 100); 
+            const insentif = terimaNett > 0 ? terimaNett * 0.01 : 0;
+            const admin = terimaNett > 0 ? terimaNett * 0.005 : 0;
 
-        // ===== PROFIT =====
-        const gpInc = paguInc - totalBiayaInc;
-        const gpExc = dppJual - totalBiayaExc;
+            // ===== COGS =====
+            const dppBeli = totalBeliInc / 1.11;
+            const ppnBeli = totalBeliInc - dppBeli;
 
-        const marginInc = (gpInc / paguInc) * 100;
-        const marginExc = (gpExc / dppJual) * 100;
+            // TOTAL BIAYA
+            const totalBiayaInc = dppBeli + oBeli + instal + lain + admin + insentif + discCnRp;
+            const totalBiayaExc = totalBiayaInc;
 
-        const fmt = (v) => "Rp" + Math.round(v).toLocaleString('id-ID') + ",00";
+            // ===== PROFIT =====
+            const gpInc = paguInc - totalBiayaInc;
+            const gpExc = dppJual - totalBiayaExc;
 
-        // ===== RENDER =====
-        document.getElementById('head_margin_inc').innerText = marginInc.toFixed(2) + "%";
-        document.getElementById('head_profit_inc').innerText = fmt(gpInc);
+            const marginInc = (gpInc / paguInc) * 100;
+            const marginExc = (gpExc / dppJual) * 100;
 
-        document.getElementById('s_pagu').innerText = fmt(paguInc);
-        document.getElementById('s_dpp').innerText = fmt(dppJual);
-        document.getElementById('s_ppn').innerText = fmt(ppnJual);
-        document.getElementById('s_pph').innerText = fmt(pph22);
-        document.getElementById('s_ongkir_jual').innerText = fmt(oJual);
-        document.getElementById('s_nett').innerText = fmt(terimaNett);
+            const fmt = (v) => "Rp" + Math.round(v).toLocaleString('id-ID') + ",00";
 
-        document.getElementById('s_cn_rp').innerText = fmt(discCnRp);
-        document.getElementById('s_insentif').innerText = fmt(insentif);
+            // ===== RENDER =====
+            document.getElementById('head_margin_inc').innerText = marginInc.toFixed(2) + "%";
+            document.getElementById('head_profit_inc').innerText = fmt(gpInc);
 
-        document.getElementById('c_inv').innerText = fmt(totalBeliInc);
-        document.getElementById('c_dpp_beli').innerText = fmt(dppBeli);
-        document.getElementById('c_ppn_beli').innerText = fmt(ppnBeli);
-        document.getElementById('c_ongkir_beli').innerText = fmt(oBeli);
-        document.getElementById('c_admin').innerText = fmt(admin);
+            document.getElementById('s_pagu').innerText = fmt(paguInc);
+            document.getElementById('s_dpp').innerText = fmt(dppJual);
+            document.getElementById('s_ppn').innerText = fmt(ppnJual);
+            document.getElementById('s_pph').innerText = fmt(pph22);
+            document.getElementById('s_ongkir_jual').innerText = fmt(oJual);
+            document.getElementById('s_nett').innerText = fmt(terimaNett);
 
-        document.getElementById('res_total_inc').innerText = fmt(totalBiayaInc);
-        document.getElementById('res_total_exc').innerText = fmt(totalBiayaExc);
+            document.getElementById('s_cn_rp').innerText = fmt(discCnRp);
+            document.getElementById('s_insentif').innerText = fmt(insentif);
 
-        document.getElementById('p_gp_exc').innerText = fmt(gpExc);
-        document.getElementById('p_margin_exc').innerText = marginExc.toFixed(2) + "%";
-    }
+            document.getElementById('c_inv').innerText = fmt(totalBeliInc);
+            document.getElementById('c_dpp_beli').innerText = fmt(dppBeli);
+            document.getElementById('c_ppn_beli').innerText = fmt(ppnBeli);
+            document.getElementById('c_ongkir_beli').innerText = fmt(oBeli);
+            document.getElementById('c_admin').innerText = fmt(admin);
 
-    tambahBaris();
-    document.querySelectorAll('#ongkir_jual, #ongkir_beli, #instal, #lainnya, #disc_persen')
-        .forEach(i => i.addEventListener('input', hitung));
-</script>
+            document.getElementById('res_total_inc').innerText = fmt(totalBiayaInc);
+            document.getElementById('res_total_exc').innerText = fmt(totalBiayaExc);
+
+            document.getElementById('p_gp_exc').innerText = fmt(gpExc);
+            document.getElementById('p_margin_exc').innerText = marginExc.toFixed(2) + "%";
+        }
+
+        // Jalankan baris pertama
+        tambahBaris();
+        
+        // Event listeners untuk input global
+        document.querySelectorAll('#ongkir_jual, #ongkir_beli, #instal, #lainnya, #disc_persen')
+            .forEach(i => i.addEventListener('input', hitung));
+    </script>
+</body>
+</html>
