@@ -3,156 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Margin Calculator Pro - Executive Dashboard</title>
+    <title>Margin Calculator Pro - Dynamic Version</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/autonumeric@4.6.0/dist/autoNumeric.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .glass-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .sidebar { background-color: white; border-right: 1px solid #e2e8f0; }
-        input:focus { outline: none; border-color: #3b82f6 !important; ring: 1px #3b82f6; }
-        .row-item { transition: all 0.2s; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
-        .row-item:hover { background-color: #f8fafc; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .metric-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; }
+        .sidebar { background-color: #f0f2f6; min-height: 100vh; }
+        .metric-card { border-left: 5px solid #e6e9ef; padding-left: 15px; }
+        input:focus { outline: none; border-color: #ff4b4b !important; ring: 2px #ff4b4b; }
+        .row-item { transition: all 0.2s; }
+        .row-item:hover { border-color: #3b82f6; }
     </style>
 </head>
-<body class="text-slate-800">
+<body class="bg-white font-sans text-gray-800">
 
-    <div class="flex flex-col lg:flex-row min-h-screen">
-        <aside class="sidebar w-full lg:w-64 p-6 shrink-0">
-            <div class="flex items-center gap-2 mb-8">
-                <div class="bg-blue-600 p-1.5 rounded-lg text-white">📊</div>
-                <h2 class="text-lg font-extrabold tracking-tight">MARGIN<span class="text-blue-600">PRO</span></h2>
+    <div class="flex flex-col md:flex-row">
+        <div class="sidebar w-full md:w-1/4 p-6 shadow-inner">
+            <h2 class="text-xl font-bold mb-6 italic">📋 Project Identity</h2>
+            <div class="space-y-4 mb-10">
+                <div><label class="block text-xs font-bold uppercase text-gray-500">Sales</label><input type="text" class="w-full p-2 border rounded bg-white"></div>
+                <div><label class="block text-xs font-bold uppercase text-gray-500">Nomor PO</label><input type="text" class="w-full p-2 border rounded bg-white"></div>
+                <div><label class="block text-xs font-bold uppercase text-gray-500">Vendor Supplier</label><input type="text" class="w-full p-2 border rounded bg-white"></div>
+                <div><label class="block text-xs font-bold uppercase text-gray-500">User/Project</label><input type="text" class="w-full p-2 border rounded bg-white"></div>
+                <div><label class="block text-xs font-bold uppercase text-gray-500">Provinsi</label><input type="text" class="w-full p-2 border rounded bg-white"></div>
             </div>
-            
-            <div class="space-y-4">
-                <p class="metric-label">Project Details</p>
-                <div class="space-y-3">
-                    <input type="date" id="project_date" class="w-full text-xs p-2 border rounded-md text-slate-500">
-                    <input type="text" placeholder="Sales Name" class="w-full text-xs p-2 border rounded-md">
-                    <input type="text" placeholder="Nomor PO" class="w-full text-xs p-2 border rounded-md">
-                    <input type="text" placeholder="Vendor" class="w-full text-xs p-2 border rounded-md">
-                    <input type="text" placeholder="Project Name" class="w-full text-xs p-2 border rounded-md">
-                    <input type="text" placeholder="Provinsi" class="w-full text-xs p-2 border rounded-md">
-                </div>
+            <div class="pt-6 border-t border-gray-300">
+                <button onclick="window.location.reload()" class="w-full py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded font-bold transition">🔄 Reset All Data</button>
             </div>
+        </div>
 
-            <div class="mt-10 pt-6 border-t border-slate-100">
-                <button onclick="window.location.reload()" class="w-full py-2 text-xs bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-500 rounded-md font-bold transition flex items-center justify-center gap-2">
-                    🔄 Reset Dashboard
-                </button>
-            </div>
-        </aside>
+        <div class="main-content w-full md:w-3/4 p-8">
+            <h1 class="text-3xl font-bold mb-2 text-gray-800 tracking-tight">📊 Kalkulator Margin Proyek</h1>
+            <p class="text-gray-500 mb-6">Analisis margin dengan breakdown COGS mendalam.</p>
+            <hr class="mb-8 border-gray-300">
 
-        <main class="flex-1 p-4 lg:p-8 overflow-y-auto">
-            <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-12">
                 
-                <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-                    <div>
-                        <h1 class="text-2xl font-bold text-slate-900">Project Calculator</h1>
-                        <p class="text-sm text-slate-500 font-medium">Sat-set hitung margin & COGS tanpa ribet.</p>
+                <div class="space-y-8">
+                    <div class="flex justify-between items-center border-b-2 border-blue-100 pb-2">
+                        <h3 class="text-lg font-bold text-blue-600 uppercase tracking-wide">📦 Item List / Produk</h3>
+                        <button onclick="tambahBaris()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-md text-sm font-bold transition">+ Tambah Item</button>
                     </div>
-                    <div class="flex gap-3">
-                        <button onclick="tambahBaris()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-sm">+ Add New Item</button>
+
+                    <div id="produk-container" class="space-y-4"></div>
+
+                    <h3 class="text-lg font-bold text-gray-700 border-b-2 border-gray-100 pb-2 pt-4 uppercase tracking-wide">🚚 Biaya Operasional & Discount</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-sm font-medium mb-1">Biaya Kirim Penjualan</label><input type="text" id="ongkir_jual" class="w-full p-2 border rounded"></div>
+                        <div><label class="block text-sm font-medium mb-1">Discount (CN %)</label><input type="text" id="disc_persen" class="w-full p-2 border rounded"></div>
+                        <div><label class="block text-sm font-medium mb-1">Biaya Instal / Teknisi</label><input type="text" id="instal" class="w-full p-2 border rounded"></div>
+                        <div><label class="block text-sm font-medium mb-1">Biaya Lainnya (Survey, dll.)</label><input type="text" id="lainnya" class="w-full p-2 border rounded"></div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="space-y-6">
+                    <h3 class="text-lg font-bold text-gray-600 border-b-2 border-gray-100 pb-2 uppercase tracking-wide">📈 Analysis Dashboard</h3>
                     
-                    <div class="lg:col-span-7 space-y-6">
-                        <div class="glass-card p-5">
-                            <h3 class="metric-label mb-4 border-b pb-2">📦 Itemized Products</h3>
-                            <div id="produk-container" class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-                                </div>
+                    <div class="bg-gray-900 p-8 rounded-2xl shadow-xl text-center">
+                        <p class="text-gray-400 text-sm font-bold uppercase tracking-widest">Gross Profit</p>
+                        <h2 id="profit_display" class="text-5xl font-black text-white my-2">Rp 0</h2>
+                        <div class="inline-block px-4 py-1 rounded-full bg-gray-800 mt-2">
+                            <span id="margin_display" class="text-2xl font-bold text-gray-500">0.00%</span>
                         </div>
+                    </div>
 
-                        <div class="glass-card p-5">
-                            <h3 class="metric-label mb-4 border-b pb-2 text-orange-600">🚚 OpEx & Discounts</h3>
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                <div><label class="text-[10px] font-bold text-slate-400">Ongkir Jual</label><input type="text" id="ongkir_jual" class="w-full text-xs p-2 border rounded-md bg-slate-50"></div>
-                                <div><label class="text-[10px] font-bold text-slate-400">CN Discount (%)</label><input type="text" id="disc_persen" class="w-full text-xs p-2 border rounded-md bg-slate-50"></div>
-                                <div><label class="text-[10px] font-bold text-slate-400">Biaya Instal</label><input type="text" id="instal" class="w-full text-xs p-2 border rounded-md bg-slate-50"></div>
-                                <div><label class="text-[10px] font-bold text-slate-400">Lainnya (Survey)</label><input type="text" id="lainnya" class="w-full text-xs p-2 border rounded-md bg-slate-50"></div>
-                                <div><label class="text-[10px] font-bold text-slate-400">Biaya Admin</label><input type="text" id="admin_manual" class="w-full text-xs p-2 border rounded-md bg-slate-50"></div>
+                    <div class="border rounded-xl overflow-hidden shadow-sm border-orange-200">
+                        <div class="p-4 bg-orange-600 text-white font-bold text-sm uppercase tracking-wider">
+                            COGS (Analysis Modal)
+                        </div>
+                        <div class="p-5 bg-white space-y-3 text-sm font-medium text-gray-600">
+                            <div class="flex justify-between"><span>Total Harga Beli (Excl PPN):</span> <span id="c_dpp_beli" class="font-bold">Rp 0</span></div>
+                            <div class="flex justify-between"><span>Biaya Kirim Penjualan:</span> <span id="c_ongkir">Rp 0</span></div>
+                            <div class="flex justify-between text-blue-600"><span>PPN Pembelian (11%):</span> <span id="c_ppn">Rp 0</span></div>
+                            <div class="flex justify-between font-bold border-t pt-2"><span>Harga Beli Invoice (Inc PPN):</span> <span id="c_inv_total" class="text-gray-900">Rp 0</span></div>
+                            <div class="flex justify-between text-red-500"><span>PPh 22 / 24 / 4(2) (1.5%):</span> <span id="c_pph_modal">Rp 0</span></div>
+                            <div class="flex justify-between"><span>Biaya Instal / Teknisi:</span> <span id="c_instal">Rp 0</span></div>
+                            <div class="flex justify-between"><span>Biaya Lainnya (Survey, dll.):</span> <span id="c_lain">Rp 0</span></div>
+                            <div class="flex justify-between"><span>Biaya Administrasi (0,5%):</span> <span id="c_admin">Rp 0</span></div>
+                            <hr class="border-dashed">
+                            <div class="flex justify-between text-lg font-black text-orange-700 pt-2">
+                                <span>Total COGS (Real Modal):</span> 
+                                <span id="c_total_cogs">Rp 0</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="lg:col-span-5 space-y-6">
-                        <div class="bg-slate-900 rounded-2xl p-6 text-center shadow-lg border border-slate-800">
-                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Net Gross Profit (Excl PPN)</p>
-                            <h2 id="profit_display_excl" class="text-4xl font-black text-white my-1">Rp 0</h2>
-                            <div id="margin_badge" class="inline-block px-3 py-1 rounded-full bg-slate-800 text-sm font-bold text-slate-400 mt-1">
-                                <span id="margin_display_excl">0.00%</span>
-                            </div>
+                    <div class="border rounded-xl overflow-hidden shadow-sm">
+                        <div class="p-4 bg-gray-100 text-gray-700 font-bold text-sm uppercase tracking-wider">
+                            Sales Breakdown (Excl PPN)
                         </div>
-
-                        <div class="glass-card p-5">
-                            <h3 class="metric-label mb-4 border-b pb-2 text-blue-600">📈 Profit Analysis</h3>
-                            <div class="space-y-2">
-                                <div class="flex justify-between items-center"><span class="text-xs text-slate-500">Gross Profit (Incl PPN)</span><span id="res_gp_inc" class="text-xs font-bold">Rp 0</span></div>
-                                <div class="flex justify-between items-center"><span class="text-xs text-slate-500">Gross Profit (Excl PPN)</span><span id="res_gp_exc" class="text-xs font-bold text-blue-600">Rp 0</span></div>
-                                <div class="flex justify-between items-center pt-2 border-t"><span class="text-xs text-slate-500">Margin Profit (Incl PPN)</span><span id="res_margin_inc" class="text-xs font-bold">0.00%</span></div>
-                                <div class="flex justify-between items-center"><span class="text-xs text-slate-500">Margin Profit (Excl PPN)</span><span id="res_margin_exc" class="text-xs font-bold text-green-600">0.00%</span></div>
-                            </div>
-                        </div>
-
-                        <div class="glass-card p-5">
-                            <h3 class="metric-label mb-4 border-b pb-2 text-red-600">📊 Rekapitulasi Biaya (COGS)</h3>
-                            <div class="space-y-2">
-                                <div class="flex justify-between items-center"><span class="text-xs text-slate-500">Total Biaya (Incl PPN)</span><span id="res_total_inc" class="text-xs font-bold">Rp 0</span></div>
-                                <div class="flex justify-between items-center"><span class="text-xs text-slate-500">Total Biaya (Excl PPN)</span><span id="res_total_exc" class="text-xs font-bold text-red-600">Rp 0</span></div>
-                                <div class="mt-4 p-3 bg-slate-50 rounded-lg space-y-1.5 border border-slate-100">
-                                    <div class="flex justify-between text-[10px]"><span class="text-slate-400 uppercase">DPP Beli</span><span id="d_dpp_beli">Rp 0</span></div>
-                                    <div class="flex justify-between text-[10px]"><span class="text-slate-400 uppercase">PPh 22 (1.5%)</span><span id="d_pph_modal">Rp 0</span></div>
-                                    <div class="flex justify-between text-[10px]"><span class="text-slate-400 uppercase">CN Discount (Rp)</span><span id="d_cn_rp">Rp 0</span></div>
-                                    <div class="flex justify-between text-[10px]"><span class="text-slate-400 uppercase">Insentif Sales (1%)</span><span id="d_insentif">Rp 0</span></div>
-                                </div>
-                            </div>
+                        <div class="p-5 bg-white space-y-3 text-sm font-medium text-gray-600">
+                            <div class="flex justify-between"><span>Pagu Proyek (Inc PPN):</span> <span id="s_pagu" class="font-bold text-gray-900">Rp 0</span></div>
+                            <div class="flex justify-between"><span>DPP Penjualan:</span> <span id="s_dpp">Rp 0</span></div>
+                            <div class="flex justify-between text-red-500"><span>Insentif Sales (1%):</span> <span id="s_insentif">Rp 0</span></div>
+                            <div class="flex justify-between text-red-500"><span>Discount CN (Rp):</span> <span id="s_cn_rp">Rp 0</span></div>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
 
     <script>
         let rows = [];
         const opt = { digitGroupSeparator: '.', decimalCharacter: ',', decimalPlaces: 0, currencySymbol: 'Rp ' };
 
-        // Set Default Date Today
-        document.getElementById('project_date').valueAsDate = new Date();
-
-        // Init AutoNumeric
         const anOngkir = new AutoNumeric('#ongkir_jual', opt);
         const anInstal = new AutoNumeric('#instal', opt);
         const anLain = new AutoNumeric('#lainnya', opt);
-        const anAdmin = new AutoNumeric('#admin_manual', opt);
         const anDisc = new AutoNumeric('#disc_persen', { suffixText: ' %', maximumValue: '100', minimumValue: '0', decimalPlaces: 1, digitGroupSeparator: '' });
 
         function tambahBaris() {
             const id = Date.now();
             const container = document.getElementById('produk-container');
             const rowHTML = `
-                <div id="row-${id}" class="row-item relative space-y-2">
-                    <button onclick="hapusBaris(${id})" class="absolute top-0 right-0 text-slate-300 hover:text-red-500 transition">✕</button>
-                    <input type="text" placeholder="Item Name..." class="w-[90%] text-xs font-bold text-slate-700 bg-transparent border-none focus:ring-0 p-0">
+                <div id="row-${id}" class="row-item p-4 border rounded-xl bg-white shadow-sm relative space-y-3 border-gray-200">
+                    <button onclick="hapusBaris(${id})" class="absolute top-2 right-3 text-red-400 hover:text-red-600 font-bold">✕</button>
+                    <input type="text" placeholder="Nama Produk / ITEM" class="w-full p-2 border-b font-semibold outline-none focus:border-blue-500" style="border:none; border-bottom:1px solid #ddd;">
                     <div class="grid grid-cols-3 gap-3">
-                        <div class="flex flex-col">
-                            <span class="text-[9px] font-bold text-slate-400 uppercase">Qty</span>
-                            <input type="number" id="qty-${id}" value="1" oninput="hitung()" class="text-xs font-bold border rounded p-1 text-center bg-white">
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-[9px] font-bold text-blue-400 uppercase">Sell (Inc)</span>
-                            <input type="text" id="jual-${id}" oninput="hitung()" class="text-xs font-bold border rounded p-1 text-blue-600 bg-white">
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-[9px] font-bold text-orange-400 uppercase">Buy (Inc)</span>
-                            <input type="text" id="beli-${id}" oninput="hitung()" class="text-xs font-bold border rounded p-1 text-orange-600 bg-white">
-                        </div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">QTY</label><input type="number" id="qty-${id}" value="1" oninput="hitung()" class="w-full p-2 border rounded-md bg-gray-50 font-bold text-center"></div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Hrg Jual (Inc)</label><input type="text" id="jual-${id}" oninput="hitung()" class="w-full p-2 border rounded-md bg-blue-50 text-blue-700 font-bold"></div>
+                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Hrg Beli (Inc)</label><input type="text" id="beli-${id}" oninput="hitung()" class="w-full p-2 border rounded-md bg-orange-50 text-orange-700 font-bold"></div>
                     </div>
                 </div>`;
             container.insertAdjacentHTML('beforeend', rowHTML);
@@ -163,68 +133,70 @@
         }
 
         function hapusBaris(id) {
-            if(rows.length > 1) { document.getElementById(`row-${id}`).remove(); rows = rows.filter(rid => rid !== id); hitung(); }
+            if(rows.length > 1) { document.getElementById(`row-${id}`).remove(); rows = rows.filter(rowId => rowId !== id); hitung(); }
         }
 
         function hitung() {
-            let totalPaguInc = 0;
-            let totalBeliInc = 0;
+            let totalPagu = 0;
+            let totalBeliInv = 0;
 
             rows.forEach(id => {
                 const qty = parseFloat(document.getElementById(`qty-${id}`).value) || 0;
-                const hj = AutoNumeric.getAutoNumericElement(`#jual-${id}`).getNumber() || 0;
-                const hb = AutoNumeric.getAutoNumericElement(`#beli-${id}`).getNumber() || 0;
-                totalPaguInc += (qty * hj);
-                totalBeliInc += (qty * hb);
+                const hJual = AutoNumeric.getAutoNumericElement(`#jual-${id}`).getNumber() || 0;
+                const hBeli = AutoNumeric.getAutoNumericElement(`#beli-${id}`).getNumber() || 0;
+                totalPagu += (qty * hJual);
+                totalBeliInv += (qty * hBeli);
             });
 
             const ongkir = anOngkir.getNumber() || 0;
             const instal = anInstal.getNumber() || 0;
             const lain = anLain.getNumber() || 0;
-            const admin = anAdmin.getNumber() || 0;
             const discP = anDisc.getNumber() || 0;
 
-            const dppJual = totalPaguInc / 1.11;
-            const dppBeli = totalBeliInc / 1.11;
-            const pphModal = dppBeli * 0.015;
+            // --- LOGIKA PENJUALAN ---
+            const dppJual = totalPagu / 1.11;
             const insentifSales = dppJual * 0.01;
             const discCnRp = dppJual * (discP / 100);
-            
-            const totalBiayaInc = totalBeliInc + ongkir + instal + lain + admin + (dppJual * 0.015) + insentifSales + discCnRp;
-            const totalBiayaExc = dppBeli + ongkir + instal + lain + admin + pphModal + insentifSales + discCnRp;
 
-            const gpInc = totalPaguInc - totalBiayaInc;
-            const gpExc = dppJual - totalBiayaExc;
-            
-            const marginInc = totalPaguInc > 0 ? (gpInc / totalPaguInc) * 100 : 0;
-            const marginExc = dppJual > 0 ? (gpExc / dppJual) * 100 : 0;
+            // --- LOGIKA COGS (MODAL) ---
+            const dppBeli = totalBeliInv / 1.11;
+            const ppnBeli = dppBeli * 0.11;
+            const adminFee = totalPagu * 0.005; // 0.5% dari Pagu
+            const pphModal = dppBeli * 0.015; // Estimasi PPh 22 (1.5%)
 
+            const totalCOGS = dppBeli + ongkir + ppnBeli + pphModal + instal + lain + adminFee;
+
+            // --- PROFIT ---
+            const grossProfit = dppJual - totalCOGS - insentifSales - discCnRp;
+            const margin = dppJual > 0 ? (grossProfit / dppJual) * 100 : 0;
+
+            // --- DISPLAY ---
             const fmt = (v) => "Rp " + Math.round(v).toLocaleString('id-ID');
-            
-            document.getElementById('profit_display_excl').innerText = fmt(gpExc);
-            document.getElementById('margin_display_excl').innerText = marginExc.toFixed(2) + "%";
-            
-            document.getElementById('res_gp_inc').innerText = fmt(gpInc);
-            document.getElementById('res_gp_exc').innerText = fmt(gpExc);
-            document.getElementById('res_margin_inc').innerText = marginInc.toFixed(2) + "%";
-            document.getElementById('res_margin_exc').innerText = marginExc.toFixed(2) + "%";
+            document.getElementById('profit_display').innerText = fmt(grossProfit);
+            const mDisp = document.getElementById('margin_display');
+            mDisp.innerText = margin.toFixed(2) + "%";
+            mDisp.className = `text-2xl font-bold ${margin > 15 ? 'text-green-500' : margin > 0 ? 'text-orange-500' : 'text-red-500'}`;
 
-            document.getElementById('res_total_inc').innerText = fmt(totalBiayaInc);
-            document.getElementById('res_total_exc').innerText = fmt(totalBiayaExc);
-            
-            document.getElementById('d_dpp_beli').innerText = fmt(dppBeli);
-            document.getElementById('d_pph_modal').innerText = fmt(pphModal);
-            document.getElementById('d_cn_rp').innerText = fmt(discCnRp);
-            document.getElementById('d_insentif').innerText = fmt(insentifSales);
+            // Update COGS Section
+            document.getElementById('c_dpp_beli').innerText = fmt(dppBeli);
+            document.getElementById('c_ongkir').innerText = fmt(ongkir);
+            document.getElementById('c_ppn').innerText = fmt(ppnBeli);
+            document.getElementById('c_inv_total').innerText = fmt(totalBeliInv);
+            document.getElementById('c_pph_modal').innerText = fmt(pphModal);
+            document.getElementById('c_instal').innerText = fmt(instal);
+            document.getElementById('c_lain').innerText = fmt(lain);
+            document.getElementById('c_admin').innerText = fmt(adminFee);
+            document.getElementById('c_total_cogs').innerText = fmt(totalCOGS);
 
-            const badge = document.getElementById('margin_badge');
-            if(marginExc > 15) { badge.className = "inline-block px-3 py-1 rounded-full bg-green-900/30 text-sm font-bold text-green-400 mt-1"; }
-            else if(marginExc > 0) { badge.className = "inline-block px-3 py-1 rounded-full bg-orange-900/30 text-sm font-bold text-orange-400 mt-1"; }
-            else { badge.className = "inline-block px-3 py-1 rounded-full bg-red-900/30 text-sm font-bold text-red-400 mt-1"; }
+            // Update Sales Section
+            document.getElementById('s_pagu').innerText = fmt(totalPagu);
+            document.getElementById('s_dpp').innerText = fmt(dppJual);
+            document.getElementById('s_insentif').innerText = fmt(insentifSales);
+            document.getElementById('s_cn_rp').innerText = fmt(discCnRp);
         }
 
         tambahBaris();
-        document.querySelectorAll('#ongkir_jual, #instal, #lainnya, #disc_persen, #admin_manual').forEach(i => i.addEventListener('input', hitung));
+        document.querySelectorAll('#ongkir_jual, #instal, #lainnya, #disc_persen').forEach(i => i.addEventListener('input', hitung));
     </script>
 </body>
 </html>
