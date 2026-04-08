@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Margin Calculator Pro - Dynamic Version</title>
+    <title>Margin Calculator Pro - Versi Final</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/autonumeric@4.6.0/dist/autoNumeric.min.js"></script>
     <style>
@@ -33,7 +33,7 @@
 
         <div class="main-content w-full md:w-3/4 p-8">
             <h1 class="text-3xl font-bold mb-2 text-gray-800 tracking-tight">📊 Kalkulator Margin Proyek</h1>
-            <p class="text-gray-500 mb-6">Analisis margin dengan breakdown COGS mendalam.</p>
+            <p class="text-gray-500 mb-6">Analisis margin dengan input dinamis dan COGS manual.</p>
             <hr class="mb-8 border-gray-300">
 
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-12">
@@ -52,6 +52,7 @@
                         <div><label class="block text-sm font-medium mb-1">Discount (CN %)</label><input type="text" id="disc_persen" class="w-full p-2 border rounded"></div>
                         <div><label class="block text-sm font-medium mb-1">Biaya Instal / Teknisi</label><input type="text" id="instal" class="w-full p-2 border rounded"></div>
                         <div><label class="block text-sm font-medium mb-1">Biaya Lainnya (Survey, dll.)</label><input type="text" id="lainnya" class="w-full p-2 border rounded"></div>
+                        <div><label class="block text-sm font-medium mb-1">Biaya Administrasi (Manual)</label><input type="text" id="admin_manual" class="w-full p-2 border rounded bg-yellow-50"></div>
                     </div>
                 </div>
 
@@ -71,16 +72,16 @@
                             COGS (Analysis Modal)
                         </div>
                         <div class="p-5 bg-white space-y-3 text-sm font-medium text-gray-600">
-                            <div class="flex justify-between"><span>Total Harga Beli (Excl PPN):</span> <span id="c_dpp_beli" class="font-bold">Rp 0</span></div>
+                            <div class="flex justify-between"><span>Total Harga Beli (Excl PPN):</span> <span id="c_dpp_beli" class="font-bold text-gray-900">Rp 0</span></div>
                             <div class="flex justify-between"><span>Biaya Kirim Penjualan:</span> <span id="c_ongkir">Rp 0</span></div>
                             <div class="flex justify-between text-blue-600"><span>PPN Pembelian (11%):</span> <span id="c_ppn">Rp 0</span></div>
                             <div class="flex justify-between font-bold border-t pt-2"><span>Harga Beli Invoice (Inc PPN):</span> <span id="c_inv_total" class="text-gray-900">Rp 0</span></div>
                             <div class="flex justify-between text-red-500"><span>PPh 22 / 24 / 4(2) (1.5%):</span> <span id="c_pph_modal">Rp 0</span></div>
                             <div class="flex justify-between"><span>Biaya Instal / Teknisi:</span> <span id="c_instal">Rp 0</span></div>
                             <div class="flex justify-between"><span>Biaya Lainnya (Survey, dll.):</span> <span id="c_lain">Rp 0</span></div>
-                            <div class="flex justify-between"><span>Biaya Administrasi (0,5%):</span> <span id="c_admin">Rp 0</span></div>
+                            <div class="flex justify-between font-bold text-blue-800"><span>Biaya Administrasi (Manual):</span> <span id="c_admin">Rp 0</span></div>
                             <hr class="border-dashed">
-                            <div class="flex justify-between text-lg font-black text-orange-700 pt-2">
+                            <div class="flex justify-between text-lg font-black text-orange-700 pt-2 border-t">
                                 <span>Total COGS (Real Modal):</span> 
                                 <span id="c_total_cogs">Rp 0</span>
                             </div>
@@ -110,6 +111,7 @@
         const anOngkir = new AutoNumeric('#ongkir_jual', opt);
         const anInstal = new AutoNumeric('#instal', opt);
         const anLain = new AutoNumeric('#lainnya', opt);
+        const anAdmin = new AutoNumeric('#admin_manual', opt);
         const anDisc = new AutoNumeric('#disc_persen', { suffixText: ' %', maximumValue: '100', minimumValue: '0', decimalPlaces: 1, digitGroupSeparator: '' });
 
         function tambahBaris() {
@@ -151,6 +153,7 @@
             const ongkir = anOngkir.getNumber() || 0;
             const instal = anInstal.getNumber() || 0;
             const lain = anLain.getNumber() || 0;
+            const adminManual = anAdmin.getNumber() || 0;
             const discP = anDisc.getNumber() || 0;
 
             // --- LOGIKA PENJUALAN ---
@@ -160,11 +163,10 @@
 
             // --- LOGIKA COGS (MODAL) ---
             const dppBeli = totalBeliInv / 1.11;
-            const ppnBeli = dppBeli * 0.11;
-            const adminFee = totalPagu * 0.005; // 0.5% dari Pagu
-            const pphModal = dppBeli * 0.015; // Estimasi PPh 22 (1.5%)
+            const ppnBeli = totalBeliInv - dppBeli; // PPN adalah selisihnya
+            const pphModal = dppBeli * 0.015; // Estimasi PPh 1.5%
 
-            const totalCOGS = dppBeli + ongkir + ppnBeli + pphModal + instal + lain + adminFee;
+            const totalCOGS = dppBeli + ongkir + ppnBeli + pphModal + instal + lain + adminManual;
 
             // --- PROFIT ---
             const grossProfit = dppJual - totalCOGS - insentifSales - discCnRp;
@@ -185,7 +187,7 @@
             document.getElementById('c_pph_modal').innerText = fmt(pphModal);
             document.getElementById('c_instal').innerText = fmt(instal);
             document.getElementById('c_lain').innerText = fmt(lain);
-            document.getElementById('c_admin').innerText = fmt(adminFee);
+            document.getElementById('c_admin').innerText = fmt(adminManual);
             document.getElementById('c_total_cogs').innerText = fmt(totalCOGS);
 
             // Update Sales Section
@@ -196,7 +198,7 @@
         }
 
         tambahBaris();
-        document.querySelectorAll('#ongkir_jual, #instal, #lainnya, #disc_persen').forEach(i => i.addEventListener('input', hitung));
+        document.querySelectorAll('#ongkir_jual, #instal, #lainnya, #disc_persen, #admin_manual').forEach(i => i.addEventListener('input', hitung));
     </script>
 </body>
 </html>
