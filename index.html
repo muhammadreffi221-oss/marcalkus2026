@@ -75,7 +75,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-1">Discount (CN %)</label>
-                            <input type="number" id="disc_persen" step="0.5" value="0" oninput="hitung()" class="w-full p-2 border rounded">
+                            <input type="text" id="disc_persen" class="w-full p-2 border rounded">
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-1">Biaya Instal / Teknisi</label>
@@ -136,10 +136,19 @@
         let rows = [];
         const opt = { digitGroupSeparator: '.', decimalCharacter: ',', decimalPlaces: 0, currencySymbol: 'Rp ' };
 
-        // Inisialisasi Biaya Operasional
+        // Inisialisasi AutoNumeric
         const anOngkir = new AutoNumeric('#ongkir_jual', opt);
         const anInstal = new AutoNumeric('#instal', opt);
         const anLain = new AutoNumeric('#lainnya', opt);
+        
+        // Fitur Persen Otomatis
+        const anDisc = new AutoNumeric('#disc_persen', { 
+            suffixText: ' %', 
+            maximumValue: '100', 
+            minimumValue: '0', 
+            decimalPlaces: 1, 
+            digitGroupSeparator: '' 
+        });
 
         function tambahBaris() {
             const id = Date.now();
@@ -169,10 +178,8 @@
             `;
             
             container.insertAdjacentHTML('beforeend', rowHTML);
-            
             new AutoNumeric(`#jual-${id}`, opt);
             new AutoNumeric(`#beli-${id}`, opt);
-            
             rows.push(id);
             hitung();
         }
@@ -193,7 +200,6 @@
                 const qty = parseFloat(document.getElementById(`qty-${id}`).value) || 0;
                 const hJual = AutoNumeric.getAutoNumericElement(`#jual-${id}`).getNumber() || 0;
                 const hBeli = AutoNumeric.getAutoNumericElement(`#beli-${id}`).getNumber() || 0;
-                
                 totalPagu += (qty * hJual);
                 totalBeliInv += (qty * hBeli);
             });
@@ -201,9 +207,8 @@
             const ongkirJual = anOngkir.getNumber() || 0;
             const instal = anInstal.getNumber() || 0;
             const lainnya = anLain.getNumber() || 0;
-            const discP = parseFloat(document.getElementById('disc_persen').value) || 0;
+            const discP = anDisc.getNumber() || 0; // Ambil nilai persen
 
-            // LOGIKA PERHITUNGAN
             const dppJual = totalPagu / 1.11;
             const pph22 = dppJual * 0.015;
             const insentifSales = dppJual * 0.01;
@@ -216,7 +221,6 @@
             const grossProfit = dppJual - totalModalExcl - discCnRp - insentifSales;
             const margin = dppJual > 0 ? (grossProfit / dppJual) * 100 : 0;
 
-            // DISPLAY
             const fmt = (v) => "Rp " + Math.round(v).toLocaleString('id-ID');
             
             document.getElementById('total-pagu-display').innerText = fmt(totalPagu);
@@ -238,11 +242,9 @@
             document.getElementById('d_nett').innerText = fmt(terimaNett);
         }
 
-        // Jalankan sekali saat start
         tambahBaris();
 
-        // Event listener untuk biaya operasional
-        document.querySelectorAll('#ongkir_jual, #instal, #lainnya').forEach(i => {
+        document.querySelectorAll('#ongkir_jual, #instal, #lainnya, #disc_persen').forEach(i => {
             i.addEventListener('input', hitung);
         });
     </script>
